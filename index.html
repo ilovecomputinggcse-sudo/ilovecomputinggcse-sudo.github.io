@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GCSE Computer Science revision: 1.1 System architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F2F5F1;
+  --grid: rgba(20,33,61,.06);
+  --card: #FFFFFF;
+  --card2: #E8EEF0;
+  --ink: #14213D;
+  --muted: #475467;
+  --line: #C3CDD2;
+  --accent: #0B7285;
+  --accent-ink: #FFFFFF;
+  --mark: rgba(255,214,10,.6);
+  --good: #1F7A33;
+  --good-bg: #DFF3E3;
+  --bad: #B42318;
+  --bad-bg: #FBE3E0;
+  --focus: #14213D;
+  --head: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", Verdana, system-ui, sans-serif;
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1621; --grid: rgba(255,255,255,.045); --card: #162231; --card2: #1D2D41;
+    --ink: #E8EDF3; --muted: #A5B4C6; --line: #2C3E55; --accent: #3BC9DB; --accent-ink: #0E1621;
+    --mark: rgba(255,214,10,.3); --good: #6FD58A; --good-bg: #17331F; --bad: #FF8A80; --bad-bg: #3A1B19;
+    --focus: #E8EDF3; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1621; --grid: rgba(255,255,255,.045); --card: #162231; --card2: #1D2D41;
+  --ink: #E8EDF3; --muted: #A5B4C6; --line: #2C3E55; --accent: #3BC9DB; --accent-ink: #0E1621;
+  --mark: rgba(255,214,10,.3); --good: #6FD58A; --good-bg: #17331F; --bad: #FF8A80; --bad-bg: #3A1B19;
+  --focus: #E8EDF3; color-scheme: dark;
+}
+html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 64px); scroll-behavior: smooth; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; background-color: var(--bg); color: var(--ink);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+  font-family: var(--body); font-size: 1.05rem; line-height: 1.6;
+}
+h1, h2, h3 { font-family: var(--head); line-height: 1.15; margin: 0 0 .5em; }
+h1 { font-size: clamp(2.2rem, 7vw, 3.8rem); font-weight: 800; letter-spacing: -.02em; }
+h2 { font-size: clamp(1.6rem, 4.5vw, 2.3rem); font-weight: 800; letter-spacing: -.01em; }
+h3 { font-size: 1.2rem; font-weight: 600; margin-top: 1.4em; }
+p { margin: 0 0 1em; max-width: 68ch; }
+mark { background: linear-gradient(transparent 45%, var(--mark) 45%); color: inherit; padding: 0 .1em; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+
+nav.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: var(--bg); border-bottom: 2px solid var(--ink);
+  display: flex; gap: .25rem; overflow-x: auto; padding: .4rem .75rem; scrollbar-width: none;
+}
+nav.top a {
+  flex: 0 0 auto; padding: .35rem .8rem; text-decoration: none; color: var(--ink);
+  border-radius: 999px; font-weight: 700; font-size: .95rem; white-space: nowrap;
+}
+nav.top a:hover { background: var(--card2); }
+
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 1rem; }
+header.hero { padding: 3rem 0 2rem; }
+header.hero p.lead { font-size: 1.2rem; color: var(--muted); }
+.specs { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.4rem; }
+.specs a {
+  display: block; padding: .6rem 1rem; background: var(--card); border: 2px solid var(--ink);
+  border-radius: 10px; text-decoration: none; color: var(--ink); font-weight: 700;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.specs a span { display: block; font-weight: 400; font-size: .9rem; color: var(--muted); }
+.specs a:hover { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+
+section.topic { padding: 2.5rem 0 1rem; border-top: 2px solid var(--ink); margin-top: 2rem; }
+section.topic > h2 .ref { color: var(--accent); margin-right: .4rem; }
+
+.panel { background: var(--card); border: 2px solid var(--ink); border-radius: 12px; padding: 1.2rem; margin: 1.2rem 0; }
+.panel > h3:first-child { margin-top: 0; }
+.keybox { border-left: 8px solid var(--accent); background: var(--card); padding: .9rem 1.1rem; margin: 1.2rem 0; border-radius: 0 10px 10px 0; border-top: 1px solid var(--line); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.keybox p:last-child { margin-bottom: 0; }
+.trap { border-left-color: var(--bad); }
+.say { border-left-color: var(--good); }
+
+table { border-collapse: collapse; width: 100%; background: var(--card); border: 2px solid var(--ink); border-radius: 10px; overflow: hidden; }
+th, td { text-align: left; padding: .6rem .8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--card2); font-family: var(--head); }
+tr:last-child td { border-bottom: 0; }
+.scroll { overflow-x: auto; }
+
+ul.tight { margin: 0 0 1em; padding-left: 1.3rem; }
+ul.tight li { margin-bottom: .3rem; }
+
+.btn {
+  background: var(--accent); color: var(--accent-ink); border: 2px solid var(--ink);
+  border-radius: 8px; padding: .5rem 1rem; font-weight: 700; box-shadow: 3px 3px 0 var(--ink);
+}
+.btn:hover { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+.btn:active { transform: translate(3px,3px); box-shadow: 0 0 0 var(--ink); }
+.btn.ghost { background: var(--card); color: var(--ink); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+
+/* CPU diagram */
+.diagram svg { width: 100%; height: auto; display: block; }
+.diagram .box { fill: var(--card2); stroke: var(--ink); stroke-width: 2; }
+.diagram .cpu { fill: var(--card); stroke: var(--ink); stroke-width: 3; }
+.diagram text { fill: var(--ink); font-family: var(--body); font-size: 14px; }
+.diagram .t-h { font-family: var(--head); font-weight: 600; font-size: 17px; }
+.diagram .bus { stroke: var(--accent); stroke-width: 4; fill: none; }
+
+/* stepper */
+.phases { display: flex; gap: .4rem; margin-bottom: 1rem; }
+.phase { flex: 1; text-align: center; padding: .4rem; border: 2px solid var(--ink); border-radius: 8px; font-family: var(--head); font-weight: 600; background: var(--card2); color: var(--muted); }
+.phase.on { background: var(--mark); color: var(--ink); }
+.regs { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; margin-bottom: 1rem; }
+.reg { border: 2px solid var(--ink); border-radius: 8px; background: var(--card2); padding: .5rem; text-align: center; transition: background .25s; }
+.reg b { display: block; font-family: var(--head); }
+.reg small { color: var(--muted); display: block; font-size: .8rem; line-height: 1.2; }
+.reg .val { display: block; font-size: 1.5rem; font-family: var(--head); font-weight: 800; min-height: 2rem; }
+.reg.changed { background: var(--mark); }
+.ram { display: flex; gap: .4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.cell { border: 2px solid var(--ink); border-radius: 6px; padding: .2rem .6rem; background: var(--card); }
+.cell i { font-style: normal; color: var(--muted); font-size: .8rem; display: block; }
+.cell.cur { background: var(--mark); }
+.explain { min-height: 3.6em; font-size: 1.1rem; }
+@media (max-width: 520px) { .regs { grid-template-columns: repeat(2, 1fr); } }
+
+/* cores demo */
+.lane { display: flex; align-items: center; gap: .3rem; margin: .3rem 0; }
+.lane .name { width: 4.5rem; color: var(--muted); font-size: .9rem; }
+.blk { width: 26px; height: 26px; border-radius: 5px; background: var(--accent); border: 2px solid var(--ink); }
+.seg { display: inline-flex; border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: var(--card); padding: .4rem .9rem; font-weight: 700; }
+.seg button + button { border-left: 2px solid var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+label.chk { display: inline-flex; gap: .5rem; align-items: center; font-weight: 700; }
+label.chk input { width: 1.2rem; height: 1.2rem; accent-color: var(--accent); }
+
+/* sorting game */
+.sortcard { text-align: center; padding: 1.2rem; border: 2px dashed var(--ink); border-radius: 12px; background: var(--card2); }
+.sortcard .item { font-family: var(--head); font-size: 1.7rem; font-weight: 800; margin-bottom: .8rem; }
+.feedback { min-height: 3em; margin-top: .8rem; padding: .6rem .8rem; border-radius: 8px; }
+.feedback.good { background: var(--good-bg); color: var(--good); }
+.feedback.bad { background: var(--bad-bg); color: var(--bad); }
+.feedback:empty { padding: 0; }
+
+/* flashcards */
+.flash { perspective: 900px; }
+.flash button.face {
+  width: 100%; min-height: 200px; border: 2px solid var(--ink); border-radius: 14px;
+  background: var(--card); padding: 1.5rem; font-size: 1.25rem; text-align: center;
+  box-shadow: 6px 6px 0 var(--ink); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: .5rem;
+}
+.flash button.face.back { background: var(--mark); }
+.flash small { color: var(--muted); }
+.flash button.face.back small { color: var(--ink); }
+
+/* quiz */
+.q { background: var(--card); border: 2px solid var(--ink); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+.q h3 { margin-top: 0; font-size: 1.1rem; font-family: var(--body); font-weight: 700; }
+.opts { display: grid; gap: .5rem; }
+.opt { text-align: left; background: var(--card2); border: 2px solid var(--line); border-radius: 8px; padding: .55rem .8rem; }
+.opt:hover:not(:disabled) { border-color: var(--ink); }
+.opt.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 700; }
+.opt.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+.opt:disabled { cursor: default; }
+.why { margin: .7rem 0 0; color: var(--muted); }
+.score { position: sticky; bottom: calc(env(safe-area-inset-bottom, 0px) + .6rem); background: var(--ink); color: var(--bg); padding: .6rem 1rem; border-radius: 999px; display: inline-flex; gap: 1rem; align-items: center; font-weight: 700; }
+
+/* exam practice */
+details.exam { background: var(--card); border: 2px solid var(--ink); border-radius: 12px; margin-bottom: .9rem; padding: .9rem 1.1rem; }
+details.exam summary { cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+details.exam summary::-webkit-details-marker { display: none; }
+details.exam .marks { white-space: nowrap; background: var(--mark); padding: 0 .5rem; border-radius: 4px; height: fit-content; }
+details.exam .ms { margin-top: .8rem; padding-top: .8rem; border-top: 1px dashed var(--line); }
+details.exam .ms ul { margin: .3rem 0 0; padding-left: 1.2rem; }
+
+.regcards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; margin: 1.2rem 0; }
+.regcard { background: var(--card); border: 2px solid var(--ink); border-radius: 12px; padding: 1rem 1.1rem; box-shadow: 5px 5px 0 var(--ink); }
+.regcard .abbr { font-family: var(--head); font-weight: 800; font-size: 2.6rem; line-height: 1; }
+.regcard .full { color: var(--muted); margin-bottom: .5rem; }
+.regcard dl { margin: 0; }
+.regcard dt { font-weight: 700; margin-top: .6rem; }
+.regcard dd { margin: 0; }
+.regcard .exam-s { margin-top: .9rem; padding: .5rem .7rem; background: var(--mark); border-radius: 6px; }
+.diagram .reg-b { fill: var(--mark); stroke: var(--ink); stroke-width: 2; }
+.diagram .badge { fill: var(--ink); }
+.diagram .badge-t { fill: var(--bg); font-weight: 700; font-size: 13px; text-anchor: middle; }
+.diagram marker path { fill: var(--accent); }
+.diagram .bus[marker-end] { stroke-width: 3; }
+.rtgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; max-width: 520px; margin: 0 auto; }
+.rtb { text-align: center; font-family: var(--head); font-weight: 800; font-size: 1.2rem; }
+.gapline { margin: 0 0 .8rem; line-height: 2.2; }
+.gapline select { font: inherit; font-weight: 700; padding: .15rem .3rem; border: 2px solid var(--ink); border-radius: 6px; background: var(--card2); color: var(--ink); }
+.gapline select.ok { background: var(--good-bg); border-color: var(--good); color: var(--good); }
+.gapline select.no { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+footer { padding: 3rem 0 4rem; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } .specs a:hover, .btn:hover { transform: none; } }
+</style>
+</head>
+<body>
+
+<nav class="top" aria-label="Sections">
+  <a href="#cpu">CPU architecture</a>
+  <a href="#registers">Registers</a>
+  <a href="#performance">CPU performance</a>
+  <a href="#embedded">Embedded systems</a>
+  <a href="#flashcards">Flashcards</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#exam">Exam questions</a>
+</nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <h1>1.1 System architecture</h1>
+  <p class="lead">Year 10 GCSE Computing revision, written for the OCR J277 specification. Read each section, try the activity, then test yourself with the flashcards, quiz and exam questions at the bottom.</p>
+  <div class="specs">
+    <a href="#cpu">1.1.1<span>Architecture of the CPU</span></a>
+    <a href="#performance">1.1.2<span>CPU performance</span></a>
+    <a href="#embedded">1.1.3<span>Embedded systems</span></a>
+  </div>
+</header>
+
+<!-- ============ 1.1.1 ============ -->
+<section class="topic" id="cpu">
+  <h2><span class="ref">1.1.1</span>Architecture of the CPU</h2>
+
+  <p>The <mark>CPU (Central Processing Unit)</mark> processes data by repeatedly fetching, decoding and executing instructions. It is the "brain" of the computer.</p>
+
+  <h3>What is inside the CPU</h3>
+  <div class="panel diagram">
+    <svg viewBox="0 0 660 310" role="img" aria-label="Diagram: the CPU contains the Control Unit, ALU, registers and cache, and is connected by a bus to RAM">
+      <rect class="cpu" x="10" y="10" width="420" height="290" rx="14"/>
+      <text class="t-h" x="24" y="34">CPU</text>
+      <rect class="box" x="30" y="50" width="180" height="80" rx="8"/>
+      <text class="t-h" x="44" y="76">Control Unit</text>
+      <text x="44" y="98">Decodes instructions,</text>
+      <text x="44" y="116">controls the cycle</text>
+      <rect class="box" x="230" y="50" width="180" height="80" rx="8"/>
+      <text class="t-h" x="244" y="76">ALU</text>
+      <text x="244" y="98">Calculations and</text>
+      <text x="244" y="116">logic decisions</text>
+      <rect class="box" x="30" y="150" width="180" height="130" rx="8"/>
+      <text class="t-h" x="44" y="176">Registers</text>
+      <text x="44" y="200">PC  next address</text>
+      <text x="44" y="220">MAR  address to use</text>
+      <text x="44" y="240">MDR  data / instruction</text>
+      <text x="44" y="260">ACC  results</text>
+      <rect class="box" x="230" y="150" width="180" height="130" rx="8"/>
+      <text class="t-h" x="244" y="176">Cache</text>
+      <text x="244" y="200">Small, very fast memory</text>
+      <text x="244" y="220">holding frequently</text>
+      <text x="244" y="240">used data and</text>
+      <text x="244" y="260">instructions</text>
+      <path class="bus" d="M430 155 H500"/>
+      <rect class="box" x="500" y="100" width="150" height="110" rx="8"/>
+      <text class="t-h" x="520" y="140">RAM</text>
+      <text x="520" y="164">Main memory:</text>
+      <text x="520" y="184">programs + data</text>
+      <text x="446" y="146" font-size="12">bus</text>
+    </svg>
+  </div>
+
+  <div class="keybox">
+    <p><b>Von Neumann architecture:</b> instructions and data are stored together in the <mark>same main memory (RAM)</mark>. The CPU fetches them one after another, using a single processor and the registers above.</p>
+  </div>
+
+  <h3>The components</h3>
+  <div class="scroll">
+  <table>
+    <tr><th>Component</th><th>What it does</th></tr>
+    <tr><td><b>ALU</b><br>Arithmetic Logic Unit</td><td>Does calculations (add, subtract) and logic decisions (AND, OR, NOT, comparisons).</td></tr>
+    <tr><td><b>CU</b><br>Control Unit</td><td>Controls the fetch-decode-execute cycle, decodes instructions and directs data around the CPU.</td></tr>
+    <tr><td><b>Cache</b></td><td>Very fast memory in or next to the CPU, holding frequently used data and instructions.</td></tr>
+    <tr><td><b>Registers</b></td><td>Tiny, extremely fast storage locations inside the CPU.</td></tr>
+  </table>
+  </div>
+
+  <h3>The four registers you must know</h3>
+  <div class="scroll">
+  <table>
+    <tr><th>Register</th><th>Holds</th><th>Memory trick</th></tr>
+    <tr><td><b>PC</b> Program Counter</td><td>The <mark>address of the next instruction</mark> to be fetched</td><td>Where next</td></tr>
+    <tr><td><b>MAR</b> Memory Address Register</td><td>The <mark>address</mark> in memory about to be read from or written to</td><td>Where from</td></tr>
+    <tr><td><b>MDR</b> Memory Data Register</td><td>The <mark>data or instruction</mark> just fetched from memory, or about to be written to it</td><td>What's there</td></tr>
+    <tr><td><b>ACC</b> Accumulator</td><td>The <mark>results of calculations</mark> done by the ALU</td><td>The answer</td></tr>
+  </table>
+  </div>
+
+  <h3>Fetch-decode-execute cycle: step through it</h3>
+  <p>The CPU repeats this cycle billions of times a second. Press the button to walk through one cycle. The program has <b>ADD 4</b> stored at address 3, and the accumulator starts at 6.</p>
+
+  <div class="panel" id="fde">
+    <div class="phases" aria-hidden="true">
+      <div class="phase" data-p="Fetch">Fetch</div>
+      <div class="phase" data-p="Decode">Decode</div>
+      <div class="phase" data-p="Execute">Execute</div>
+    </div>
+    <div class="regs">
+      <div class="reg" id="r-PC"><b>PC</b><small>next address</small><span class="val">3</span></div>
+      <div class="reg" id="r-MAR"><b>MAR</b><small>address in use</small><span class="val">-</span></div>
+      <div class="reg" id="r-MDR"><b>MDR</b><small>data / instruction</small><span class="val">-</span></div>
+      <div class="reg" id="r-ACC"><b>ACC</b><small>result</small><span class="val">6</span></div>
+    </div>
+    <div class="ram" id="ramrow" aria-label="Contents of RAM"></div>
+    <p class="explain" id="fde-text" aria-live="polite"></p>
+    <div class="row">
+      <button class="btn" id="fde-next">Next step</button>
+      <button class="btn ghost" id="fde-reset">Start again</button>
+    </div>
+  </div>
+
+  <div class="keybox say">
+    <p><b>Summary to remember:</b> Fetch: the instruction is fetched from RAM into the CPU. Decode: the Control Unit works out what it means. Execute: the instruction is carried out, for example the ALU does a calculation.</p>
+  </div>
+</section>
+
+<!-- ============ Registers deep dive ============ -->
+<section class="topic" id="registers">
+  <h2><span class="ref">1.1.1</span>Registers in depth</h2>
+  <p>A <mark>register</mark> is a tiny, extremely fast storage location <b>inside the CPU</b>. Each of the four you need to know holds just one thing at a time, and what it holds keeps changing as the fetch-decode-execute cycle runs.</p>
+
+  <div class="keybox">
+    <p><b>The letters give the job away.</b> In <b>MAR</b>, the A is for <mark>Address</mark>. In <b>MDR</b>, the D is for <mark>Data</mark>. The <b>PC</b> counts its way through the program, so it knows <mark>what comes next</mark>. The <b>ACC</b> accumulates, so it keeps the <mark>answer</mark>.</p>
+  </div>
+
+  <h3>The four registers</h3>
+  <div class="regcards">
+    <div class="regcard">
+      <div class="abbr">PC</div><div class="full">Program Counter</div>
+      <dl>
+        <dt>Holds</dt><dd>The address of the <b>next</b> instruction to be fetched.</dd>
+        <dt>Its job</dt><dd>Keeps the CPU's place in the program. It goes up by 1 on every cycle.</dd>
+        <dt>Think of it as</dt><dd>A bookmark.</dd>
+        <dt>Example</dt><dd>PC = 3 means the next instruction is at address 3.</dd>
+      </dl>
+      <div class="exam-s">The PC holds the address of the next instruction to be fetched.</div>
+    </div>
+    <div class="regcard">
+      <div class="abbr">MAR</div><div class="full">Memory Address Register</div>
+      <dl>
+        <dt>Holds</dt><dd>An <b>address</b>: a location in memory.</dd>
+        <dt>Its job</dt><dd>Tells RAM exactly where to read from or write to.</dd>
+        <dt>Think of it as</dt><dd>The slip of paper with the shelf number on it.</dd>
+        <dt>Example</dt><dd>MAR = 3 means "go to address 3".</dd>
+      </dl>
+      <div class="exam-s">The MAR holds the address in memory that is about to be read from or written to.</div>
+    </div>
+    <div class="regcard">
+      <div class="abbr">MDR</div><div class="full">Memory Data Register</div>
+      <dl>
+        <dt>Holds</dt><dd>The <b>data or instruction</b> that was just fetched from memory, or is about to be written to it.</dd>
+        <dt>Its job</dt><dd>A waiting room between the CPU and RAM.</dd>
+        <dt>Think of it as</dt><dd>The tray the book arrives on.</dd>
+        <dt>Example</dt><dd>MDR = ADD 4, or MDR = 25.</dd>
+      </dl>
+      <div class="exam-s">The MDR holds the data or instruction just fetched from, or about to be written to, memory.</div>
+    </div>
+    <div class="regcard">
+      <div class="abbr">ACC</div><div class="full">Accumulator</div>
+      <dl>
+        <dt>Holds</dt><dd>The <b>result</b> of a calculation done by the ALU.</dd>
+        <dt>Its job</dt><dd>Stores the running answer while the program works.</dd>
+        <dt>Think of it as</dt><dd>The notepad with your running total.</dd>
+        <dt>Example</dt><dd>ACC = 6, then ADD 4 runs, so ACC = 10.</dd>
+      </dl>
+      <div class="exam-s">The ACC holds the results of calculations carried out by the ALU.</div>
+    </div>
+  </div>
+
+  <h3>A story to remember them</h3>
+  <div class="panel">
+    <p>You are the CPU, following a list of instructions kept in a huge library (RAM).</p>
+    <ul class="tight">
+      <li>The <b>PC</b> is your bookmark. It says which item on the list comes next.</li>
+      <li>You write that shelf number on a slip of paper. That slip is the <b>MAR</b>.</li>
+      <li>The librarian finds the item and puts it on a tray. That tray is the <b>MDR</b>.</li>
+      <li>You read it and do the sum. You write the answer on your notepad. That notepad is the <b>ACC</b>.</li>
+    </ul>
+  </div>
+
+  <h3>Follow the data</h3>
+  <p>The numbers show the order things happen in during one cycle.</p>
+  <div class="panel diagram">
+    <svg viewBox="0 0 700 260" role="img" aria-label="Flow diagram: PC to MAR to RAM to MDR, then MDR to Control Unit to ALU to ACC">
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z"/></marker></defs>
+      <rect class="reg-b" x="10" y="40" width="120" height="64" rx="8"/>
+      <text class="t-h" x="70" y="68" text-anchor="middle">PC</text><text x="70" y="90" text-anchor="middle" font-size="12">next address</text>
+      <text x="70" y="126" text-anchor="middle" font-size="12">then PC + 1</text>
+      <rect class="reg-b" x="190" y="40" width="120" height="64" rx="8"/>
+      <text class="t-h" x="250" y="68" text-anchor="middle">MAR</text><text x="250" y="90" text-anchor="middle" font-size="12">address</text>
+      <rect class="box" x="370" y="40" width="130" height="64" rx="8"/>
+      <text class="t-h" x="435" y="68" text-anchor="middle">RAM</text><text x="435" y="90" text-anchor="middle" font-size="12">main memory</text>
+      <rect class="reg-b" x="560" y="40" width="120" height="64" rx="8"/>
+      <text class="t-h" x="620" y="68" text-anchor="middle">MDR</text><text x="620" y="90" text-anchor="middle" font-size="12">data / instruction</text>
+      <rect class="box" x="560" y="180" width="120" height="64" rx="8"/>
+      <text class="t-h" x="620" y="208" text-anchor="middle">CU</text><text x="620" y="230" text-anchor="middle" font-size="12">decodes</text>
+      <rect class="box" x="370" y="180" width="130" height="64" rx="8"/>
+      <text class="t-h" x="435" y="208" text-anchor="middle">ALU</text><text x="435" y="230" text-anchor="middle" font-size="12">calculates</text>
+      <rect class="reg-b" x="190" y="180" width="120" height="64" rx="8"/>
+      <text class="t-h" x="250" y="208" text-anchor="middle">ACC</text><text x="250" y="230" text-anchor="middle" font-size="12">result</text>
+      <path class="bus" marker-end="url(#arr)" d="M132 72 H188"/>
+      <path class="bus" marker-end="url(#arr)" d="M312 72 H368"/>
+      <path class="bus" marker-end="url(#arr)" d="M502 72 H558"/>
+      <path class="bus" marker-end="url(#arr)" d="M620 106 V178"/>
+      <path class="bus" marker-end="url(#arr)" d="M558 212 H502"/>
+      <path class="bus" marker-end="url(#arr)" d="M368 212 H312"/>
+      <circle class="badge" cx="160" cy="54" r="11"/><text class="badge-t" x="160" y="59">1</text>
+      <circle class="badge" cx="340" cy="54" r="11"/><text class="badge-t" x="340" y="59">2</text>
+      <circle class="badge" cx="530" cy="54" r="11"/><text class="badge-t" x="530" y="59">3</text>
+      <circle class="badge" cx="644" cy="142" r="11"/><text class="badge-t" x="644" y="147">4</text>
+      <circle class="badge" cx="530" cy="194" r="11"/><text class="badge-t" x="530" y="199">5</text>
+      <circle class="badge" cx="340" cy="194" r="11"/><text class="badge-t" x="340" y="199">6</text>
+    </svg>
+  </div>
+  <div class="scroll">
+  <table>
+    <tr><th>Step</th><th>What happens</th><th>Registers used</th></tr>
+    <tr><td>1</td><td>The address of the next instruction is copied from the PC to the MAR. The PC is then increased by 1.</td><td>PC, MAR</td></tr>
+    <tr><td>2</td><td>The address in the MAR tells RAM where to look.</td><td>MAR</td></tr>
+    <tr><td>3</td><td>The instruction at that address is copied from RAM into the MDR.</td><td>MDR</td></tr>
+    <tr><td>4</td><td>The Control Unit decodes the instruction held in the MDR.</td><td>MDR</td></tr>
+    <tr><td>5</td><td>The instruction is executed. If it needs a calculation, the ALU does it.</td><td></td></tr>
+    <tr><td>6</td><td>The result of the calculation is stored in the ACC.</td><td>ACC</td></tr>
+  </table>
+  </div>
+
+  <div class="keybox trap">
+    <p><b>Mistakes that lose marks</b></p>
+    <ul class="tight">
+      <li>The PC holds the address of the <i>next</i> instruction, not the one being run. It has already moved on by the time execution starts.</li>
+      <li>The MAR holds an <i>address</i>. It never holds the instruction or data itself. That is the MDR's job.</li>
+      <li>The MDR can hold data <i>or</i> an instruction, and it works in both directions (reading and writing).</li>
+      <li>The ACC holds results from the ALU. It is not where things arrive from RAM.</li>
+      <li>Saying what the letters stand for is not enough. Always say what the register <b>holds</b>.</li>
+    </ul>
+  </div>
+
+  <h3>Register trainer: which register is it?</h3>
+  <div class="panel" id="rt">
+    <div class="sortcard">
+      <div class="item" id="rt-prompt" style="font-size:1.3rem"></div>
+      <div class="rtgrid" id="rt-btns">
+        <button class="opt rtb" data-r="0">PC</button>
+        <button class="opt rtb" data-r="1">MAR</button>
+        <button class="opt rtb" data-r="2">MDR</button>
+        <button class="opt rtb" data-r="3">ACC</button>
+      </div>
+    </div>
+    <div class="feedback" id="rt-fb" aria-live="polite"></div>
+    <div class="row" style="margin-top:.6rem">
+      <button class="btn ghost" id="rt-next" disabled>Next one</button>
+      <span id="rt-score" style="font-weight:700"></span>
+    </div>
+  </div>
+
+  <h3>Fill the gaps: the fetch-decode-execute cycle</h3>
+  <p>Choose the right word for each gap, then press Check.</p>
+  <div class="panel" id="gaps">
+    <div id="gap-list"></div>
+    <div class="row" style="margin-top:.8rem">
+      <button class="btn" id="gap-check">Check answers</button>
+      <button class="btn ghost" id="gap-reset">Clear</button>
+      <span id="gap-score" style="font-weight:700" aria-live="polite"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1.1.2 ============ -->
+<section class="topic" id="performance">
+  <h2><span class="ref">1.1.2</span>CPU performance</h2>
+  <p>Three factors affect how fast a CPU performs. For each one, learn what it is <i>and</i> why it makes the computer faster.</p>
+
+  <div class="scroll">
+  <table>
+    <tr><th>Factor</th><th>What it is</th><th>Effect on performance</th></tr>
+    <tr><td><b>Clock speed</b></td><td>Measured in GHz. The number of fetch-decode-execute cycles per second. 3 GHz is 3 billion cycles a second.</td><td>Higher clock speed means <mark>more instructions processed per second</mark>. The downside is that the CPU gets hotter.</td></tr>
+    <tr><td><b>Cache size</b></td><td>Fast memory on or next to the CPU. Much faster than RAM but expensive, so it is small.</td><td>A larger cache means frequently used data is close by, so the CPU <mark>waits for RAM less often</mark>.</td></tr>
+    <tr><td><b>Number of cores</b></td><td>Each core is effectively a separate processor that can run its own fetch-decode-execute cycle.</td><td>More cores means <mark>more instructions processed at the same time</mark>, which helps with multitasking.</td></tr>
+  </table>
+  </div>
+
+  <div class="keybox trap">
+    <p><b>Exam trap:</b> more cores does not always mean faster. The software must be written to split its work across the cores (parallel processing). A program that does one task at a time will not speed up much, however many cores there are.</p>
+  </div>
+
+  <h3>Try it: do extra cores always help?</h3>
+  <div class="panel" id="cores">
+    <p>The program has 8 equal jobs to do. Each block is one job and takes one unit of time.</p>
+    <div class="row" style="margin-bottom:.8rem">
+      <div class="seg" role="group" aria-label="Number of cores">
+        <button data-c="1" aria-pressed="false">1 core</button>
+        <button data-c="2" aria-pressed="false">2 cores</button>
+        <button data-c="4" aria-pressed="true">4 cores</button>
+        <button data-c="8" aria-pressed="false">8 cores</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="par" checked> Program splits jobs across cores</label>
+    </div>
+    <div id="lanes"></div>
+    <p id="cores-text" style="margin-top:.8rem" aria-live="polite"></p>
+  </div>
+
+  <div class="keybox say">
+    <p><b>Use this phrasing:</b> "A higher clock speed means the CPU can process more instructions per second, so the computer runs faster." Always link the factor to its effect.</p>
+  </div>
+</section>
+
+<!-- ============ 1.1.3 ============ -->
+<section class="topic" id="embedded">
+  <h2><span class="ref">1.1.3</span>Embedded systems</h2>
+
+  <div class="keybox">
+    <p><b>Definition:</b> an <mark>embedded system</mark> is a computer system built into a larger device to perform a <mark>dedicated (specific) function</mark>.</p>
+  </div>
+
+  <h3>Typical characteristics</h3>
+  <ul class="tight">
+    <li>Does <b>one specific task</b> (or a small number), unlike a general-purpose computer.</li>
+    <li>The program is stored in <b>ROM</b> (firmware), so it is not easily changed.</li>
+    <li>Usually <b>small, low power and cheap</b>.</li>
+    <li>Often works in <b>real time</b>, responding instantly (for example a car airbag).</li>
+    <li>Often has a <b>limited or no user interface</b>.</li>
+  </ul>
+  <p><b>Examples:</b> washing machine, microwave, digital watch, car engine management system, traffic lights, central heating thermostat, TV remote, smart doorbell, pacemaker.</p>
+
+  <div class="scroll">
+  <table>
+    <tr><th></th><th>General-purpose computer</th><th>Embedded system</th></tr>
+    <tr><td><b>Purpose</b></td><td>Many tasks, runs many programs</td><td>One dedicated task</td></tr>
+    <tr><td><b>Example</b></td><td>Laptop, desktop PC, tablet</td><td>Microwave controller</td></tr>
+    <tr><td><b>Reprogrammable by user?</b></td><td>Yes, install any software</td><td>Rarely, program is in ROM</td></tr>
+  </table>
+  </div>
+
+  <h3>Try it: embedded or general-purpose?</h3>
+  <div class="panel" id="sort">
+    <div class="sortcard">
+      <div class="item" id="sort-item"></div>
+      <div class="row" style="justify-content:center">
+        <button class="btn" id="s-emb">Embedded system</button>
+        <button class="btn ghost" id="s-gen">General-purpose</button>
+      </div>
+    </div>
+    <div class="feedback" id="sort-fb" aria-live="polite"></div>
+    <div class="row" style="margin-top:.6rem">
+      <button class="btn ghost" id="sort-next" disabled>Next item</button>
+      <span id="sort-score" style="font-weight:700"></span>
+    </div>
+  </div>
+
+  <div class="keybox say">
+    <p><b>In the exam:</b> always give a <i>specific</i> example and say what its dedicated function is, for example "a washing machine's control system, which controls the wash programme and motor".</p>
+  </div>
+</section>
+
+<!-- ============ Flashcards ============ -->
+<section class="topic" id="flashcards">
+  <h2>Flashcards</h2>
+  <p>Read the question, say the answer out loud, then tap the card to check.</p>
+  <div class="flash">
+    <button class="face" id="card" aria-live="polite"></button>
+  </div>
+  <div class="row" style="margin-top:1.2rem">
+    <button class="btn ghost" id="f-prev">Previous</button>
+    <button class="btn" id="f-next">Next card</button>
+    <button class="btn ghost" id="f-shuf">Shuffle</button>
+    <span id="f-count" style="font-weight:700"></span>
+  </div>
+</section>
+
+<!-- ============ Quiz ============ -->
+<section class="topic" id="quiz">
+  <h2>Quick quiz</h2>
+  <p>18 questions, the last five on registers. Pick an answer to see if you are right and why.</p>
+  <div id="quiz-body"></div>
+  <div class="score" id="quiz-score" aria-live="polite">
+    <span id="qs-text">Score: 0 / 0</span>
+    <button class="btn ghost" id="q-reset" style="padding:.2rem .7rem;box-shadow:none">Reset</button>
+  </div>
+</section>
+
+<!-- ============ Exam ============ -->
+<section class="topic" id="exam">
+  <h2>Exam-style questions</h2>
+  <p>Write your answer on paper first, then open the question to check it against the mark points. Each separate correct point earns one mark.</p>
+
+  <details class="exam"><summary><span>State what the MAR is used for.</span><span class="marks">1 mark</span></summary>
+    <div class="ms"><b>Mark points:</b><ul><li>Holds the address in memory that is about to be read from or written to.</li></ul></div></details>
+
+  <details class="exam"><summary><span>Describe the role of the ALU.</span><span class="marks">2 marks</span></summary>
+    <div class="ms"><b>Mark points (any two):</b><ul>
+      <li>Carries out arithmetic calculations, for example addition.</li>
+      <li>Carries out logical operations or comparisons, for example AND, OR, NOT.</li>
+      <li>Results are stored in the accumulator.</li></ul></div></details>
+
+  <details class="exam"><summary><span>Describe the fetch-decode-execute cycle.</span><span class="marks">4 marks</span></summary>
+    <div class="ms"><b>Mark points (any four):</b><ul>
+      <li>The address of the next instruction is held in the PC.</li>
+      <li>The address is copied to the MAR.</li>
+      <li>The instruction is fetched from RAM at that address into the MDR.</li>
+      <li>The PC is incremented.</li>
+      <li>The Control Unit decodes the instruction.</li>
+      <li>The instruction is executed, for example the ALU performs a calculation.</li>
+      <li>The cycle repeats.</li></ul></div></details>
+
+  <details class="exam"><summary><span>A computer has a 3.2 GHz quad-core CPU. Explain what this means.</span><span class="marks">3 marks</span></summary>
+    <div class="ms"><b>Mark points:</b><ul>
+      <li>3.2 GHz means 3.2 billion fetch-decode-execute cycles per second.</li>
+      <li>Quad-core means the CPU has four cores (processing units).</li>
+      <li>So it can process several instructions at the same time, if the software supports it.</li></ul></div></details>
+
+  <details class="exam"><summary><span>Explain how increasing the cache size can improve CPU performance.</span><span class="marks">2 marks</span></summary>
+    <div class="ms"><b>Mark points:</b><ul>
+      <li>More frequently used data and instructions can be stored in the cache.</li>
+      <li>Cache is faster than RAM, so the CPU spends less time waiting for data from RAM.</li></ul></div></details>
+
+  <details class="exam"><summary><span>Explain why a CPU with more cores may not make a program run faster.</span><span class="marks">2 marks</span></summary>
+    <div class="ms"><b>Mark points:</b><ul>
+      <li>The program may not be written to split its tasks across several cores.</li>
+      <li>So only one core is used and the other cores sit idle (or the tasks depend on each other's results).</li></ul></div></details>
+
+  <details class="exam"><summary><span>Give two characteristics of an embedded system.</span><span class="marks">2 marks</span></summary>
+    <div class="ms"><b>Mark points (any two):</b><ul>
+      <li>Performs a dedicated / specific function.</li>
+      <li>Program stored in ROM (firmware).</li>
+      <li>Small, low power, low cost.</li>
+      <li>Limited or no user interface.</li>
+      <li>Often works in real time.</li></ul></div></details>
+
+  <details class="exam"><summary><span>A microwave oven contains an embedded system. Describe what it does and why it is not a general-purpose computer.</span><span class="marks">3 marks</span></summary>
+    <div class="ms"><b>Mark points:</b><ul>
+      <li>It controls the microwave, for example timer, power level, turntable and door sensor.</li>
+      <li>It only performs this one dedicated function.</li>
+      <li>It cannot be used to run other programs, unlike a general-purpose computer.</li></ul></div></details>
+</section>
+
+<footer>
+  <p>Good luck with the assessment. If a question says <b>state</b> or <b>give</b>, keep it short. For <b>describe</b>, add detail. For <b>explain</b>, include a reason using "because" or "so".</p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Fetch-decode-execute stepper ---------- */
+  var steps = [
+    { phase: null,      pc: "3", mar: "-", mdr: "-",     acc: "6",  cur: 3, changed: [],
+      text: "Ready. The PC holds the address of the next instruction: 3. The accumulator holds 6." },
+    { phase: "Fetch",   pc: "3", mar: "3", mdr: "-",     acc: "6",  cur: 3, changed: ["MAR"],
+      text: "Fetch: the address in the PC is copied to the MAR." },
+    { phase: "Fetch",   pc: "4", mar: "3", mdr: "-",     acc: "6",  cur: 3, changed: ["PC"],
+      text: "Fetch: the PC is incremented, so it points to the next instruction (address 4)." },
+    { phase: "Fetch",   pc: "4", mar: "3", mdr: "ADD 4", acc: "6",  cur: 3, changed: ["MDR"],
+      text: "Fetch: the instruction stored at address 3 in RAM is copied into the MDR." },
+    { phase: "Decode",  pc: "4", mar: "3", mdr: "ADD 4", acc: "6",  cur: 3, changed: [],
+      text: "Decode: the Control Unit works out what 'ADD 4' means: add 4 to the value in the accumulator." },
+    { phase: "Execute", pc: "4", mar: "3", mdr: "ADD 4", acc: "10", cur: 3, changed: ["ACC"],
+      text: "Execute: the ALU calculates 6 + 4 = 10 and the result is stored in the ACC." },
+    { phase: null,      pc: "4", mar: "3", mdr: "ADD 4", acc: "10", cur: 4, changed: [],
+      text: "Cycle complete. It now repeats, this time fetching the instruction at address 4 (the PC value)." }
+  ];
+  var ram = [["3", "ADD 4"], ["4", "STORE"], ["5", "HALT"]];
+  var si = 0;
+  var ramRow = document.getElementById("ramrow");
+  function renderFDE() {
+    var s = steps[si];
+    ["PC", "MAR", "MDR", "ACC"].forEach(function (r) {
+      var el = document.getElementById("r-" + r);
+      el.querySelector(".val").textContent = s[r.toLowerCase()];
+      el.classList.toggle("changed", s.changed.indexOf(r) > -1);
+    });
+    document.querySelectorAll("#fde .phase").forEach(function (p) {
+      p.classList.toggle("on", p.getAttribute("data-p") === s.phase);
+    });
+    ramRow.innerHTML = "";
+    ram.forEach(function (c) {
+      var d = document.createElement("div");
+      d.className = "cell" + (String(s.cur) === c[0] ? " cur" : "");
+      d.innerHTML = "<i>address " + c[0] + "</i>" + c[1];
+      ramRow.appendChild(d);
+    });
+    document.getElementById("fde-text").textContent = s.text;
+    document.getElementById("fde-next").disabled = si === steps.length - 1;
+  }
+  document.getElementById("fde-next").addEventListener("click", function () { if (si < steps.length - 1) { si++; renderFDE(); } });
+  document.getElementById("fde-reset").addEventListener("click", function () { si = 0; renderFDE(); });
+  renderFDE();
+
+  /* ---------- Cores demo ---------- */
+  var cores = 4;
+  var jobs = 8;
+  function renderCores() {
+    var par = document.getElementById("par").checked;
+    var lanes = document.getElementById("lanes");
+    lanes.innerHTML = "";
+    var counts = [];
+    for (var i = 0; i < cores; i++) counts.push(0);
+    if (par) { for (var j = 0; j < jobs; j++) counts[j % cores]++; }
+    else { counts[0] = jobs; }
+    counts.forEach(function (n, idx) {
+      var lane = document.createElement("div");
+      lane.className = "lane";
+      var nm = document.createElement("span");
+      nm.className = "name";
+      nm.textContent = "Core " + (idx + 1);
+      lane.appendChild(nm);
+      for (var k = 0; k < n; k++) { var b = document.createElement("span"); b.className = "blk"; lane.appendChild(b); }
+      lanes.appendChild(lane);
+    });
+    var time = Math.max.apply(null, counts);
+    var msg = "Time taken: " + time + " units. ";
+    if (!par && cores > 1) msg += "The program does not split its jobs, so one core does everything and the other " + (cores - 1) + " sit idle. Extra cores make no difference.";
+    else if (par && cores > 1) msg += "The jobs are shared out, so several run at the same time.";
+    else msg += "One core must do every job in turn.";
+    document.getElementById("cores-text").textContent = msg;
+  }
+  document.querySelectorAll("#cores .seg button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      cores = parseInt(b.getAttribute("data-c"), 10);
+      document.querySelectorAll("#cores .seg button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      renderCores();
+    });
+  });
+  document.getElementById("par").addEventListener("change", renderCores);
+  renderCores();
+
+  /* ---------- Embedded sorter ---------- */
+  var items = [
+    ["Washing machine controller", true, "It only controls the wash programme, motor and water."],
+    ["Laptop", false, "It runs many different programs and the user can install more."],
+    ["Microwave controller", true, "Dedicated to controlling the timer, power and turntable."],
+    ["Desktop PC", false, "General-purpose: many tasks and reprogrammable by the user."],
+    ["Car engine management system", true, "Dedicated to monitoring and controlling the engine, in real time."],
+    ["Tablet", false, "It runs many apps, so it is general-purpose."],
+    ["Traffic lights controller", true, "Does one job: controlling the light sequence."],
+    ["Pacemaker", true, "Dedicated to regulating the heartbeat, in real time."],
+    ["Smart doorbell", true, "Dedicated to detecting a visitor and sending alerts or video."],
+    ["Gaming PC", false, "Can run games, office software, editing tools and more."]
+  ];
+  var order = [], pos = 0, sScore = 0, answered = false;
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function startSort() { order = shuffle(items.map(function (_, i) { return i; })); pos = 0; sScore = 0; showSort(); }
+  function showSort() {
+    var fb = document.getElementById("sort-fb");
+    fb.textContent = ""; fb.className = "feedback"; answered = false;
+    document.getElementById("s-emb").disabled = false;
+    document.getElementById("s-gen").disabled = false;
+    var nx = document.getElementById("sort-next");
+    nx.disabled = true; nx.textContent = "Next item";
+    document.getElementById("sort-item").textContent = items[order[pos]][0];
+    document.getElementById("sort-score").textContent = "Score: " + sScore + " / " + pos;
+  }
+  function answerSort(sayEmbedded) {
+    if (answered) return;
+    answered = true;
+    var it = items[order[pos]];
+    var right = sayEmbedded === it[1];
+    if (right) sScore++;
+    var fb = document.getElementById("sort-fb");
+    fb.className = "feedback " + (right ? "good" : "bad");
+    fb.textContent = (right ? "Correct. " : "Not quite. It is " + (it[1] ? "an embedded system. " : "general-purpose. ")) + it[2];
+    document.getElementById("s-emb").disabled = true;
+    document.getElementById("s-gen").disabled = true;
+    document.getElementById("sort-score").textContent = "Score: " + sScore + " / " + (pos + 1);
+    var nx = document.getElementById("sort-next");
+    nx.disabled = false;
+    nx.textContent = pos === order.length - 1 ? "Play again" : "Next item";
+  }
+  document.getElementById("s-emb").addEventListener("click", function () { answerSort(true); });
+  document.getElementById("s-gen").addEventListener("click", function () { answerSort(false); });
+  document.getElementById("sort-next").addEventListener("click", function () {
+    if (pos === order.length - 1) startSort(); else { pos++; showSort(); }
+  });
+  startSort();
+
+  /* ---------- Register trainer ---------- */
+  var rtItems = [
+    ["Holds the address of the next instruction to be fetched.", 0, "PC: the Program Counter keeps your place in the program."],
+    ["Holds the memory address that is about to be read from or written to.", 1, "MAR: the A is for Address."],
+    ["Holds the instruction that has just arrived from RAM.", 2, "MDR: it holds what was fetched. Instructions arrive here, not in the MAR."],
+    ["Stores the answer after the ALU works out 6 + 4.", 3, "ACC: the Accumulator holds results of calculations."],
+    ["Its value goes up by 1 during every fetch.", 0, "PC: it is incremented so it points at the next instruction."],
+    ["The address 3 is copied into this register so RAM knows where to look.", 1, "MAR: it tells RAM which address to use."],
+    ["Data that is about to be written back into memory waits here.", 2, "MDR: the Data register works for reading and writing."],
+    ["The ALU sends its results to this register.", 3, "ACC: results of ALU calculations go here."],
+    ["Holds a data value, such as the number 25, that was just read from RAM.", 2, "MDR: D is for Data, and it holds data or instructions."],
+    ["At the start of a program, this holds the address of the first instruction.", 0, "PC: it starts at the first instruction, then counts on."],
+    ["The Control Unit decodes the instruction held in this register.", 2, "MDR: the fetched instruction waits here to be decoded."],
+    ["Holds an address that a copy of the PC value was moved into during fetch.", 1, "MAR: the address is copied from the PC into the MAR."]
+  ];
+  var rtNames = ["PC", "MAR", "MDR", "ACC"];
+  var rtOrder = [], rtPos = 0, rtScore = 0, rtStreak = 0, rtAnswered = false;
+  var rtBtns = document.querySelectorAll("#rt-btns button");
+  function rtStart() { rtOrder = shuffle(rtItems.map(function (_, i) { return i; })); rtPos = 0; rtScore = 0; rtStreak = 0; rtShow(); }
+  function rtShow() {
+    rtAnswered = false;
+    document.getElementById("rt-prompt").textContent = rtItems[rtOrder[rtPos]][0];
+    var fb = document.getElementById("rt-fb"); fb.textContent = ""; fb.className = "feedback";
+    rtBtns.forEach(function (b) { b.disabled = false; b.className = "opt rtb"; });
+    var nx = document.getElementById("rt-next"); nx.disabled = true; nx.textContent = "Next one";
+    document.getElementById("rt-score").textContent = "Correct: " + rtScore + " of " + rtPos + ". Streak: " + rtStreak;
+  }
+  rtBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      if (rtAnswered) return;
+      rtAnswered = true;
+      var it = rtItems[rtOrder[rtPos]];
+      var pick = parseInt(b.getAttribute("data-r"), 10);
+      var right = pick === it[1];
+      if (right) { rtScore++; rtStreak++; } else { rtStreak = 0; }
+      rtBtns.forEach(function (x, xi) { x.disabled = true; if (xi === it[1]) x.classList.add("right"); });
+      if (!right) b.classList.add("wrong");
+      var fb = document.getElementById("rt-fb");
+      fb.className = "feedback " + (right ? "good" : "bad");
+      fb.textContent = (right ? "Correct. " : "Not quite. ") + it[2];
+      document.getElementById("rt-score").textContent = "Correct: " + rtScore + " of " + (rtPos + 1) + ". Streak: " + rtStreak;
+      var nx = document.getElementById("rt-next"); nx.disabled = false;
+      nx.textContent = rtPos === rtOrder.length - 1 ? "Play again" : "Next one";
+    });
+  });
+  document.getElementById("rt-next").addEventListener("click", function () {
+    if (rtPos === rtOrder.length - 1) rtStart(); else { rtPos++; rtShow(); }
+  });
+  rtStart();
+
+  /* ---------- Fill the gaps ---------- */
+  var gapData = [
+    ["At the start of fetch, the address in the ", "PC", " is copied into the ", "MAR", "."],
+    ["The instruction stored at that address in RAM is copied into the ", "MDR", "."],
+    ["The ", "PC", " is increased by 1 so that it points to the next instruction."],
+    ["The ", "CU", " decodes the instruction that is held in the ", "MDR", "."],
+    ["The ", "ALU", " does the calculation and the result is stored in the ", "ACC", "."]
+  ];
+  var gapOpts = ["PC", "MAR", "MDR", "ACC", "CU", "ALU"];
+  var gapList = document.getElementById("gap-list");
+  function buildGaps() {
+    gapList.innerHTML = "";
+    gapData.forEach(function (parts) {
+      var p = document.createElement("p"); p.className = "gapline";
+      parts.forEach(function (part, i) {
+        if (i % 2 === 0) { p.appendChild(document.createTextNode(part)); }
+        else {
+          var s = document.createElement("select"); s.setAttribute("aria-label", "Choose the missing word");
+          s.setAttribute("data-a", part);
+          var d = document.createElement("option"); d.value = ""; d.textContent = "choose"; s.appendChild(d);
+          gapOpts.forEach(function (o) { var op = document.createElement("option"); op.value = o; op.textContent = o; s.appendChild(op); });
+          p.appendChild(s);
+        }
+      });
+      gapList.appendChild(p);
+    });
+    document.getElementById("gap-score").textContent = "";
+  }
+  document.getElementById("gap-check").addEventListener("click", function () {
+    var sels = gapList.querySelectorAll("select"), ok = 0;
+    sels.forEach(function (s) {
+      var good = s.value === s.getAttribute("data-a");
+      if (good) ok++;
+      s.className = s.value === "" ? "" : (good ? "ok" : "no");
+    });
+    document.getElementById("gap-score").textContent = ok + " of " + sels.length + " gaps correct" + (ok === sels.length ? ". Perfect." : ". Fix the red ones and check again.");
+  });
+  document.getElementById("gap-reset").addEventListener("click", buildGaps);
+  buildGaps();
+
+  /* ---------- Flashcards ---------- */
+  var cards = [
+    ["What is the purpose of the CPU?", "To process data by repeatedly fetching, decoding and executing instructions."],
+    ["What are the three stages of the cycle?", "Fetch, decode, execute."],
+    ["What does the ALU do?", "Arithmetic calculations and logic decisions (AND, OR, NOT, comparisons)."],
+    ["What does the Control Unit do?", "Controls the fetch-decode-execute cycle, decodes instructions and directs data around the CPU."],
+    ["What does the PC hold?", "The address of the next instruction to be fetched."],
+    ["What does the MAR hold?", "The address in memory that is about to be read from or written to."],
+    ["What does the MDR hold?", "The data or instruction just fetched from memory, or about to be written to it."],
+    ["What does the ACC hold?", "The results of calculations done by the ALU."],
+    ["What is von Neumann architecture?", "Instructions and data stored together in the same main memory (RAM)."],
+    ["What is cache?", "Very fast memory in or next to the CPU that holds frequently used data and instructions."],
+    ["What does clock speed measure?", "Fetch-decode-execute cycles per second, in GHz. 1 GHz is 1 billion cycles per second."],
+    ["How does a bigger cache help performance?", "More frequently used data is close to the CPU, so it waits for slower RAM less often."],
+    ["How do more cores help performance?", "Each core processes instructions, so more can be handled at the same time. Software must be written to use them."],
+    ["What is an embedded system?", "A computer system built into a larger device to perform a dedicated function."],
+    ["Give three examples of embedded systems.", "Any three: washing machine, microwave, traffic lights, car engine management, pacemaker, smart doorbell."],
+    ["Where is an embedded system's program usually stored?", "In ROM (as firmware)."],
+    ["PC: what does it stand for and what does it hold?", "Program Counter. It holds the address of the next instruction to be fetched."],
+    ["MAR: what does it stand for and what does it hold?", "Memory Address Register. It holds the address in memory about to be read from or written to."],
+    ["MDR: what does it stand for and what does it hold?", "Memory Data Register. It holds the data or instruction just fetched from, or about to be written to, memory."],
+    ["ACC: what does it stand for and what does it hold?", "Accumulator. It holds the results of calculations done by the ALU."],
+    ["Which register's value goes up by 1 each cycle?", "The PC (Program Counter)."],
+    ["Which register does the PC's value get copied into?", "The MAR."],
+    ["What is a register?", "A tiny, extremely fast storage location inside the CPU."]
+  ];
+  var deck = cards.slice(), fi = 0, flipped = false;
+  var cardEl = document.getElementById("card");
+  function renderCard() {
+    var c = deck[fi];
+    cardEl.className = "face" + (flipped ? " back" : "");
+    cardEl.innerHTML = "<small>" + (flipped ? "Answer" : "Question") + "</small><span></span>";
+    cardEl.querySelector("span").textContent = flipped ? c[1] : c[0];
+    document.getElementById("f-count").textContent = (fi + 1) + " of " + deck.length;
+  }
+  cardEl.addEventListener("click", function () { flipped = !flipped; renderCard(); });
+  document.getElementById("f-next").addEventListener("click", function () { fi = (fi + 1) % deck.length; flipped = false; renderCard(); });
+  document.getElementById("f-prev").addEventListener("click", function () { fi = (fi - 1 + deck.length) % deck.length; flipped = false; renderCard(); });
+  document.getElementById("f-shuf").addEventListener("click", function () { shuffle(deck); fi = 0; flipped = false; renderCard(); });
+  renderCard();
+
+  /* ---------- Quiz ---------- */
+  var quiz = [
+    ["Which register holds the address of the next instruction to be fetched?", ["MAR", "PC", "MDR", "ACC"], 1, "The Program Counter (PC) holds the address of the next instruction."],
+    ["Which component carries out calculations and logical comparisons?", ["Control Unit", "Cache", "ALU", "RAM"], 2, "The ALU does arithmetic and logic."],
+    ["What does the MDR hold?", ["The address of the next instruction", "The result of a calculation", "The size of the cache", "The data or instruction just fetched from, or about to be written to, memory"], 3, "MDR = Memory Data Register: it holds what is being transferred to or from memory."],
+    ["In von Neumann architecture, where are instructions and data stored?", ["In separate memories", "In the same main memory", "Only in cache", "Only in registers"], 1, "Von Neumann stores both instructions and data in the same memory."],
+    ["A CPU runs at 3 GHz. What does this mean?", ["3 thousand cycles per second", "3 million cycles per second", "3 billion cycles per second", "It has 3 cores"], 2, "1 GHz is 1 billion fetch-decode-execute cycles per second."],
+    ["Why is cache faster to access than RAM?", ["It is much bigger", "It is built into or very close to the CPU and uses faster memory", "It is permanent storage", "It is cheaper to make"], 1, "Cache is on or next to the CPU, which is why it is fast. It is small and expensive."],
+    ["A program runs only one task at a time. What happens if you upgrade from 2 cores to 8?", ["It runs 4 times faster", "It crashes", "Little or no improvement", "It runs slower"], 2, "The software must split its work across cores to benefit from extra cores."],
+    ["Which of these is NOT an embedded system?", ["Pacemaker", "Washing machine controller", "Laptop", "Microwave controller"], 2, "A laptop is general-purpose. The others each do one dedicated job."],
+    ["Where is an embedded system's program usually stored?", ["ROM", "A hard disk drive", "The cloud", "Cache"], 0, "Firmware is stored in ROM, so it is not easily changed."],
+    ["What is the correct order of the cycle?", ["Decode, fetch, execute", "Fetch, execute, decode", "Execute, fetch, decode", "Fetch, decode, execute"], 3, "Fetch the instruction, decode it, then execute it."],
+    ["Which register stores the result of an ALU calculation?", ["PC", "ACC", "MAR", "MDR"], 1, "ACC is the Accumulator: it holds the answer."],
+    ["What is a disadvantage of increasing clock speed?", ["The CPU produces more heat", "There is less cache", "There are fewer cores", "RAM stops working"], 0, "Faster cycles generate more heat, which can cause overheating."],
+    ["Which part of the CPU decodes instructions?", ["ALU", "Control Unit", "Cache", "ACC"], 1, "The Control Unit decodes instructions and controls the cycle."],
+    ["The CPU is about to read from memory address 12. Which register holds the number 12?", ["MDR", "ACC", "MAR", "PC"], 2, "The MAR holds the address that is about to be read from or written to."],
+    ["An instruction has just arrived from RAM. Which register holds it?", ["MDR", "MAR", "PC", "ACC"], 0, "The MDR holds the data or instruction just fetched from memory."],
+    ["Why is the PC increased by 1 during each fetch?", ["To store the answer of a calculation", "So it points to the address of the next instruction", "To make the clock speed faster", "To empty the cache"], 1, "The PC always holds the address of the next instruction, so it must move on."],
+    ["The ALU adds 5 and 7. Which register stores the 12?", ["MAR", "PC", "MDR", "ACC"], 3, "Results of ALU calculations are stored in the accumulator."],
+    ["At the start of the fetch stage, which register's value is copied into the MAR?", ["PC", "ACC", "MDR", "Cache"], 0, "The address in the PC is copied into the MAR so RAM knows where to look."]
+  ];
+  var qBody = document.getElementById("quiz-body");
+  var qCorrect = 0, qDone = 0;
+  function buildQuiz() {
+    qBody.innerHTML = ""; qCorrect = 0; qDone = 0; updateScore();
+    quiz.forEach(function (q, qi) {
+      var wrap = document.createElement("div"); wrap.className = "q";
+      var h = document.createElement("h3"); h.textContent = (qi + 1) + ". " + q[0]; wrap.appendChild(h);
+      var opts = document.createElement("div"); opts.className = "opts";
+      var why = document.createElement("p"); why.className = "why";
+      q[1].forEach(function (text, oi) {
+        var b = document.createElement("button"); b.className = "opt"; b.textContent = text;
+        b.addEventListener("click", function () {
+          var btns = opts.querySelectorAll("button");
+          btns.forEach(function (x, xi) { x.disabled = true; if (xi === q[2]) x.classList.add("right"); });
+          if (oi === q[2]) { qCorrect++; } else { b.classList.add("wrong"); }
+          qDone++; why.textContent = (oi === q[2] ? "Correct. " : "Not quite. ") + q[3];
+          updateScore();
+        });
+        opts.appendChild(b);
+      });
+      wrap.appendChild(opts); wrap.appendChild(why); qBody.appendChild(wrap);
+    });
+  }
+  function updateScore() {
+    var t = "Score: " + qCorrect + " / " + qDone;
+    if (qDone === quiz.length) t += " (finished)";
+    document.getElementById("qs-text").textContent = t;
+  }
+  document.getElementById("q-reset").addEventListener("click", function () { buildQuiz(); document.getElementById("quiz").scrollIntoView(); });
+  buildQuiz();
+})();
+</script>
+</body>
+</html>
