@@ -209,6 +209,16 @@ details.exam .ms ul { margin: .3rem 0 0; padding-left: 1.2rem; }
 .gapline select { font: inherit; font-weight: 700; padding: .15rem .3rem; border: 2px solid var(--ink); border-radius: 6px; background: var(--card2); color: var(--ink); }
 .gapline select.ok { background: var(--good-bg); border-color: var(--good); color: var(--good); }
 .gapline select.no { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+.bitrow { display: flex; gap: .4rem; flex-wrap: wrap; }
+.bitb { width: 3.2rem; padding: .4rem 0; border: 2px solid var(--ink); border-radius: 8px; background: var(--card2); text-align: center; line-height: 1.2; }
+.bitb b { display: block; font-family: var(--head); font-size: 1.5rem; }
+.bitb small { color: var(--muted); }
+.bitb[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.bitb[aria-pressed="true"] small { color: var(--bg); }
+.calc .cf { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: .9rem; }
+.calc label { display: grid; gap: .2rem; font-weight: 700; }
+.calc input { font: inherit; width: 9.5rem; padding: .4rem; border: 2px solid var(--ink); border-radius: 6px; background: var(--card2); color: var(--ink); }
+.calc [hidden] { display: none; }
 footer { padding: 3rem 0 4rem; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } .specs a:hover, .btn:hover { transform: none; } }
 </style>
@@ -220,6 +230,7 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
   <a href="#registers">Registers</a>
   <a href="#performance">CPU performance</a>
   <a href="#embedded">Embedded systems</a>
+  <a href="#memory">1.2 Memory and storage</a>
   <a href="#flashcards">Flashcards</a>
   <a href="#quiz">Quiz</a>
   <a href="#exam">Exam questions</a>
@@ -228,12 +239,13 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
 <div class="wrap">
 
 <header class="hero">
-  <h1>1.1 System architecture</h1>
+  <h1>1.1 System architecture and 1.2 Memory and storage</h1>
   <p class="lead">Year 10 GCSE Computing revision, written for the OCR J277 specification. Read each section, try the activity, then test yourself with the flashcards, quiz and exam questions at the bottom.</p>
   <div class="specs">
     <a href="#cpu">1.1.1<span>Architecture of the CPU</span></a>
     <a href="#performance">1.1.2<span>CPU performance</span></a>
     <a href="#embedded">1.1.3<span>Embedded systems</span></a>
+    <a href="#memory">1.2<span>Memory and storage</span></a>
   </div>
 </header>
 
@@ -569,6 +581,98 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
   </div>
 </section>
 
+<!-- ============ 1.2 ============ -->
+<section class="topic" id="memory">
+  <h2><span class="ref">1.2</span>Memory and storage</h2>
+
+  <h3>1.2.1 Primary storage (memory)</h3>
+  <p>Primary storage is memory the CPU can access directly. The CPU needs it because it can only work on data and instructions that are in main memory, not on a hard drive.</p>
+  <div class="scroll"><table>
+    <tr><th></th><th>RAM</th><th>ROM</th></tr>
+    <tr><td><b>Stands for</b></td><td>Random Access Memory</td><td>Read Only Memory</td></tr>
+    <tr><td><b>Volatile?</b></td><td><mark>Volatile</mark>: contents are lost when power is off</td><td><mark>Non-volatile</mark>: contents stay when power is off</td></tr>
+    <tr><td><b>Read / write</b></td><td>Can be read and written</td><td>Can only be read (not normally changed)</td></tr>
+    <tr><td><b>Purpose</b></td><td>Holds the programs, data and parts of the operating system currently in use</td><td>Holds the <mark>bootstrap</mark> (start-up instructions) that load the operating system when the computer is switched on</td></tr>
+  </table></div>
+  <div class="keybox"><p><b>Virtual memory:</b> when RAM is full, the computer uses part of the <mark>secondary storage</mark> as if it were extra RAM. Data not needed right now is moved out of RAM into virtual memory, and moved back when needed. This lets more programs run, but it is <mark>slower</mark> because secondary storage is slower than RAM.</p></div>
+
+  <h3>1.2.2 Secondary storage</h3>
+  <p>Secondary storage is needed because RAM is volatile and limited. It is <mark>non-volatile</mark>, so it keeps programs and files when the power is off, and it holds much more data.</p>
+  <div class="scroll"><table>
+    <tr><th>Type</th><th>Examples</th><th>Strengths</th><th>Weaknesses</th></tr>
+    <tr><td><b>Magnetic</b></td><td>Hard disk drive (HDD)</td><td>Large capacity, cheap per GB</td><td>Slower, moving parts so less durable, uses more power</td></tr>
+    <tr><td><b>Optical</b></td><td>CD, DVD, Blu-ray</td><td>Cheap, light and portable</td><td>Low capacity, slow, scratches easily</td></tr>
+    <tr><td><b>Solid state</b></td><td>SSD, USB stick, SD card</td><td>Fast, no moving parts so durable, quiet, portable</td><td>More expensive per GB, smaller capacity for the price</td></tr>
+  </table></div>
+  <p>Compare using: <b>capacity, speed, portability, durability, reliability, cost</b>. Example: a school backing up lots of work could use an external hard drive for its large capacity and low cost. A phone uses solid state because it is small, fast and durable.</p>
+
+  <h3>1.2.3 Units of data</h3>
+  <div class="scroll"><table>
+    <tr><th>Unit</th><th>Size</th></tr>
+    <tr><td>bit</td><td>a single 1 or 0</td></tr>
+    <tr><td>nibble</td><td>4 bits</td></tr>
+    <tr><td>byte</td><td>8 bits</td></tr>
+    <tr><td>kilobyte (KB)</td><td>1000 bytes</td></tr>
+    <tr><td>megabyte (MB)</td><td>1000 KB</td></tr>
+    <tr><td>gigabyte (GB)</td><td>1000 MB</td></tr>
+    <tr><td>terabyte (TB)</td><td>1000 GB</td></tr>
+    <tr><td>petabyte (PB)</td><td>1000 TB</td></tr>
+  </table></div>
+  <p>OCR uses <b>1000</b> (not 1024) between units. To go to a bigger unit, divide. To go to a smaller unit, multiply. Computers use binary because they are built from switches that are either on (1) or off (0).</p>
+
+  <h3>1.2.4 How data is stored</h3>
+  <h3 style="margin-top:.4rem">Numbers</h3>
+  <p>Tap the bits to build a binary number. Each bit is worth double the one to its right.</p>
+  <div class="panel">
+    <div class="bitrow" id="bitrow"></div>
+    <p style="margin:.8rem 0 0;font-size:1.2rem" id="bit-out" aria-live="polite"></p>
+  </div>
+  <ul class="tight">
+    <li><b>Hexadecimal</b> (base 16) uses 0-9 then A=10, B=11, C=12, D=13, E=14, F=15. Each hex digit = one nibble (4 bits), so it is a shorter way to write binary. Example: 1111 0011 = F3.</li>
+    <li><b>Binary addition:</b> 0+0=0, 0+1=1, 1+1=10 (write 0, carry 1), 1+1+1=11 (write 1, carry 1). An answer that needs more bits than are available is an <mark>overflow</mark> error.</li>
+    <li><b>Binary shift:</b> a left shift by 1 <mark>multiplies by 2</mark>. A right shift by 1 <mark>divides by 2</mark>. Empty places are filled with 0s.</li>
+  </ul>
+  <h3 style="margin-top:1rem">Characters</h3>
+  <p>Each character has a binary code in a <mark>character set</mark>. <b>ASCII</b> uses 7 bits (128 characters, mainly English). <b>Unicode</b> uses more bits per character, so it covers many languages and symbols such as emojis, but files are bigger.</p>
+  <h3 style="margin-top:1rem">Images</h3>
+  <ul class="tight">
+    <li>An image is a grid of <b>pixels</b>, each stored as binary.</li>
+    <li><b>Resolution</b> = width x height in pixels. <b>Colour depth</b> = bits per pixel. More of either means better quality but a bigger file.</li>
+    <li><b>Metadata</b> is data about the file, such as dimensions, colour depth and date.</li>
+    <li><mark>File size (bits) = width x height x colour depth</mark></li>
+  </ul>
+  <h3 style="margin-top:1rem">Sound</h3>
+  <ul class="tight">
+    <li>Sound is <b>sampled</b>: the wave's height is measured at regular intervals and stored in binary.</li>
+    <li><b>Sample rate</b> (Hz) = samples per second. <b>Bit depth</b> = bits per sample. More of either means better quality but a bigger file.</li>
+    <li><mark>File size (bits) = sample rate x bit depth x length in seconds</mark></li>
+  </ul>
+  <h3 style="margin-top:1rem">Compression</h3>
+  <div class="scroll"><table>
+    <tr><th>Lossy</th><th>Lossless</th></tr>
+    <tr><td>Permanently removes some data. Much smaller file, quality drops, original cannot be restored. Example: JPEG, MP3.</td><td>Reduces file size without losing any data. Original can be restored exactly. Smaller saving. Example: PNG, ZIP.</td></tr>
+  </table></div>
+
+  <h3>File size calculator</h3>
+  <div class="panel calc" id="calc">
+    <div class="seg" role="group" aria-label="File type">
+      <button data-m="img" aria-pressed="true">Image</button>
+      <button data-m="snd" aria-pressed="false">Sound</button>
+    </div>
+    <div id="c-img" class="cf">
+      <label>Width (pixels) <input type="number" min="1" value="100" data-k="a"></label>
+      <label>Height (pixels) <input type="number" min="1" value="50" data-k="b"></label>
+      <label>Colour depth (bits) <input type="number" min="1" value="8" data-k="c"></label>
+    </div>
+    <div id="c-snd" class="cf" hidden>
+      <label>Sample rate (Hz) <input type="number" min="1" value="44100" data-k="a"></label>
+      <label>Bit depth (bits) <input type="number" min="1" value="16" data-k="b"></label>
+      <label>Length (seconds) <input type="number" min="1" value="10" data-k="c"></label>
+    </div>
+    <p id="c-out" aria-live="polite" style="margin:.8rem 0 0"></p>
+  </div>
+</section>
+
 <!-- ============ Flashcards ============ -->
 <section class="topic" id="flashcards">
   <h2>Flashcards</h2>
@@ -587,7 +691,7 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
 <!-- ============ Quiz ============ -->
 <section class="topic" id="quiz">
   <h2>Quick quiz</h2>
-  <p>18 questions, the last five on registers. Pick an answer to see if you are right and why.</p>
+  <p>26 questions: the last five on registers, the last eight on 1.2. Pick an answer to see if you are right and why.</p>
   <div id="quiz-body"></div>
   <div class="score" id="quiz-score" aria-live="polite">
     <span id="qs-text">Score: 0 / 0</span>
@@ -642,6 +746,18 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
       <li>Small, low power, low cost.</li>
       <li>Limited or no user interface.</li>
       <li>Often works in real time.</li></ul></div></details>
+
+  <details class="exam"><summary><span>State two differences between RAM and ROM.</span><span class="marks">2 marks</span></summary>
+    <div class="ms"><b>Mark points (any two):</b><ul><li>RAM is volatile, ROM is non-volatile.</li><li>RAM can be read and written, ROM is read only.</li><li>RAM holds programs and data in use, ROM holds the bootstrap.</li></ul></div></details>
+
+  <details class="exam"><summary><span>Explain what virtual memory is and why it is needed.</span><span class="marks">3 marks</span></summary>
+    <div class="ms"><b>Mark points:</b><ul><li>Part of secondary storage is used as if it were RAM.</li><li>It is needed when RAM is full.</li><li>Data not currently needed is moved out of RAM, then moved back when required (slower than RAM).</li></ul></div></details>
+
+  <details class="exam"><summary><span>A school wants to back up students' work. Suggest a suitable storage device and justify your choice.</span><span class="marks">3 marks</span></summary>
+    <div class="ms"><b>Mark points:</b><ul><li>Identify a suitable device, for example an external hard disk drive (magnetic).</li><li>Large capacity, so lots of work fits.</li><li>Cheap per GB (or reliable and re-writable).</li></ul></div></details>
+
+  <details class="exam"><summary><span>An image is 100 pixels wide and 50 pixels high, with a colour depth of 8 bits. Calculate its file size in bytes.</span><span class="marks">2 marks</span></summary>
+    <div class="ms"><b>Mark points:</b><ul><li>100 x 50 x 8 = 40,000 bits.</li><li>40,000 / 8 = 5,000 bytes.</li></ul></div></details>
 
   <details class="exam"><summary><span>A microwave oven contains an embedded system. Describe what it does and why it is not a general-purpose computer.</span><span class="marks">3 marks</span></summary>
     <div class="ms"><b>Mark points:</b><ul>
@@ -881,6 +997,47 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
   document.getElementById("gap-reset").addEventListener("click", buildGaps);
   buildGaps();
 
+  /* ---------- 1.2 widgets ---------- */
+  var bits = [0, 0, 0, 0, 0, 0, 0, 0], bitRow = document.getElementById("bitrow");
+  function renderBits() {
+    var v = 0;
+    bitRow.innerHTML = "";
+    bits.forEach(function (on, i) {
+      var w = 128 >> i; if (on) v += w;
+      var b = document.createElement("button"); b.className = "bitb"; b.setAttribute("aria-pressed", on ? "true" : "false");
+      b.setAttribute("aria-label", "Bit worth " + w);
+      b.innerHTML = "<b>" + on + "</b><small>" + w + "</small>";
+      b.addEventListener("click", function () { bits[i] = on ? 0 : 1; renderBits(); });
+      bitRow.appendChild(b);
+    });
+    document.getElementById("bit-out").innerHTML = "Binary <b>" + bits.join("").replace(/(\d{4})(\d{4})/, "$1 $2") + "</b> = denary <b>" + v + "</b> = hex <b>" + (v < 16 ? "0" : "") + v.toString(16).toUpperCase() + "</b>";
+  }
+  renderBits();
+
+  var cMode = "img";
+  function fmtSize(by) {
+    var u = [[1e15, "PB"], [1e12, "TB"], [1e9, "GB"], [1e6, "MB"], [1e3, "KB"]];
+    for (var i = 0; i < u.length; i++) if (by >= u[i][0]) return +(by / u[i][0]).toFixed(2) + " " + u[i][1];
+    return by + " bytes";
+  }
+  function calc() {
+    var box = document.getElementById("c-" + cMode), v = {};
+    box.querySelectorAll("input").forEach(function (i) { v[i.getAttribute("data-k")] = parseFloat(i.value) || 0; });
+    var bitsTotal = v.a * v.b * v.c, by = bitsTotal / 8;
+    document.getElementById("c-out").innerHTML = v.a + " x " + v.b + " x " + v.c + " = <b>" + bitsTotal.toLocaleString("en-GB") + " bits</b>. Divide by 8: <b>" + by.toLocaleString("en-GB") + " bytes</b> (" + fmtSize(by) + ").";
+  }
+  document.querySelectorAll("#calc .seg button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      cMode = b.getAttribute("data-m");
+      document.querySelectorAll("#calc .seg button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      document.getElementById("c-img").hidden = cMode !== "img";
+      document.getElementById("c-snd").hidden = cMode !== "snd";
+      calc();
+    });
+  });
+  document.querySelectorAll("#calc input").forEach(function (i) { i.addEventListener("input", calc); });
+  calc();
+
   /* ---------- Flashcards ---------- */
   var cards = [
     ["What is the purpose of the CPU?", "To process data by repeatedly fetching, decoding and executing instructions."],
@@ -905,7 +1062,17 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
     ["ACC: what does it stand for and what does it hold?", "Accumulator. It holds the results of calculations done by the ALU."],
     ["Which register's value goes up by 1 each cycle?", "The PC (Program Counter)."],
     ["Which register does the PC's value get copied into?", "The MAR."],
-    ["What is a register?", "A tiny, extremely fast storage location inside the CPU."]
+    ["What is a register?", "A tiny, extremely fast storage location inside the CPU."],
+    ["RAM vs ROM: give the key differences.", "RAM is volatile, read/write, holds programs and data in use. ROM is non-volatile, read-only, holds the bootstrap."],
+    ["What is virtual memory?", "Part of secondary storage used as extra RAM when RAM is full. It is slower than RAM."],
+    ["Why do computers need secondary storage?", "RAM is volatile and small. Secondary storage is non-volatile and holds lots of data long term."],
+    ["Name the three types of secondary storage with an example of each.", "Magnetic (HDD), optical (DVD), solid state (SSD or USB stick)."],
+    ["How many bits in a nibble and in a byte?", "Nibble 4 bits, byte 8 bits."],
+    ["How many bytes in a kilobyte, megabyte, gigabyte (OCR)?", "1000 bytes, 1000 KB, 1000 MB."],
+    ["Formula for image file size?", "Width x height x colour depth (in bits). Divide by 8 for bytes."],
+    ["Formula for sound file size?", "Sample rate x bit depth x length in seconds (in bits). Divide by 8 for bytes."],
+    ["Lossy vs lossless compression?", "Lossy permanently removes data for a smaller file. Lossless keeps all data and can be restored exactly."],
+    ["ASCII vs Unicode?", "ASCII: 7 bits, 128 characters. Unicode: more bits, many more characters and languages."]
   ];
   var deck = cards.slice(), fi = 0, flipped = false;
   var cardEl = document.getElementById("card");
@@ -941,7 +1108,15 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
     ["An instruction has just arrived from RAM. Which register holds it?", ["MDR", "MAR", "PC", "ACC"], 0, "The MDR holds the data or instruction just fetched from memory."],
     ["Why is the PC increased by 1 during each fetch?", ["To store the answer of a calculation", "So it points to the address of the next instruction", "To make the clock speed faster", "To empty the cache"], 1, "The PC always holds the address of the next instruction, so it must move on."],
     ["The ALU adds 5 and 7. Which register stores the 12?", ["MAR", "PC", "MDR", "ACC"], 3, "Results of ALU calculations are stored in the accumulator."],
-    ["At the start of the fetch stage, which register's value is copied into the MAR?", ["PC", "ACC", "MDR", "Cache"], 0, "The address in the PC is copied into the MAR so RAM knows where to look."]
+    ["At the start of the fetch stage, which register's value is copied into the MAR?", ["PC", "ACC", "MDR", "Cache"], 0, "The address in the PC is copied into the MAR so RAM knows where to look."],
+    ["What happens to the contents of RAM when the power is switched off?", ["They are saved", "They are lost", "They move to ROM", "They become virtual memory"], 1, "RAM is volatile, so its contents are lost without power."],
+    ["What is stored in ROM?", ["The user's files", "Open programs", "The bootstrap (start-up instructions)", "Virtual memory"], 2, "ROM is non-volatile and holds the instructions that start the computer."],
+    ["What is virtual memory?", ["Extra cache", "Part of secondary storage used as RAM", "A type of ROM", "Memory stored online only"], 1, "It is used when RAM is full, and is slower than real RAM."],
+    ["Why is an SSD more durable than an HDD?", ["It has no moving parts", "It uses a laser", "It is cheaper", "It has less storage"], 0, "Solid state storage has no moving parts to damage."],
+    ["How many bits are in a byte?", ["4", "8", "16", "1000"], 1, "A byte is 8 bits. A nibble is 4 bits."],
+    ["What is binary 00001010 in denary?", ["8", "10", "12", "15"], 1, "8 + 2 = 10."],
+    ["Why can Unicode store more characters than ASCII?", ["It uses more bits per character", "It uses fewer bits", "It is lossy", "It only stores English"], 0, "More bits per character means more possible codes, covering many languages and emojis."],
+    ["What does lossy compression do?", ["Keeps every bit of data", "Permanently removes some data", "Encrypts the file", "Makes the file bigger"], 1, "Lossy compression gives a smaller file but the removed data cannot be restored."]
   ];
   var qBody = document.getElementById("quiz-body");
   var qCorrect = 0, qDone = 0;
