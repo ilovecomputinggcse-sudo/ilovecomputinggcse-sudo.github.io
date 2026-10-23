@@ -66,13 +66,22 @@ button { font: inherit; color: inherit; cursor: pointer; }
 nav.top {
   position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
   background: var(--bg); border-bottom: 2px solid var(--ink);
-  display: flex; gap: .25rem; overflow-x: auto; padding: .4rem .75rem; scrollbar-width: none;
+  display: flex; gap: .4rem; padding: .4rem .75rem;
 }
 nav.top a {
   flex: 0 0 auto; padding: .35rem .8rem; text-decoration: none; color: var(--ink);
   border-radius: 999px; font-weight: 700; font-size: .95rem; white-space: nowrap;
 }
 nav.top a:hover { background: var(--card2); }
+.grp { position: relative; }
+.gbtn { font-family: var(--body); font-weight: 700; font-size: .95rem; background: var(--card); color: var(--ink); border: 2px solid var(--ink); border-radius: 999px; padding: .3rem .85rem; box-shadow: 2px 2px 0 var(--ink); white-space: nowrap; }
+.gbtn::after { content: " \25BE"; }
+.gbtn.cur, .gbtn[aria-expanded="true"] { background: var(--mark); }
+.menu { position: absolute; left: 0; top: calc(100% + .5rem); min-width: 230px; background: var(--card); border: 2px solid var(--ink); border-radius: 10px; box-shadow: 4px 4px 0 var(--ink); padding: .3rem; z-index: 11; }
+.menu[hidden] { display: none; }
+.menu a { display: block; border-radius: 6px; white-space: normal; font-weight: 400; }
+.menu a b { font-family: var(--head); color: var(--accent); margin-right: .35rem; }
+.grp:last-child .menu { left: auto; right: 0; }
 
 .wrap { max-width: 980px; margin: 0 auto; padding: 0 1rem; }
 header.hero { padding: 3rem 0 2rem; }
@@ -226,14 +235,33 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
 <body>
 
 <nav class="top" aria-label="Sections">
-  <a href="#cpu">CPU architecture</a>
-  <a href="#registers">Registers</a>
-  <a href="#performance">CPU performance</a>
-  <a href="#embedded">Embedded systems</a>
-  <a href="#memory">1.2 Memory and storage</a>
-  <a href="#flashcards">Flashcards</a>
-  <a href="#quiz">Quiz</a>
-  <a href="#exam">Exam questions</a>
+  <div class="grp">
+    <button class="gbtn" aria-expanded="false" aria-controls="m1">1.1 Architecture</button>
+    <div class="menu" id="m1" hidden>
+      <a href="#cpu"><b>1.1.1</b>CPU architecture</a>
+      <a href="#registers"><b>1.1.1</b>Registers in depth</a>
+      <a href="#performance"><b>1.1.2</b>CPU performance</a>
+      <a href="#embedded"><b>1.1.3</b>Embedded systems</a>
+    </div>
+  </div>
+  <div class="grp">
+    <button class="gbtn" aria-expanded="false" aria-controls="m2">1.2 Memory</button>
+    <div class="menu" id="m2" hidden>
+      <a href="#p121"><b>1.2.1</b>Primary storage</a>
+      <a href="#p122"><b>1.2.2</b>Secondary storage</a>
+      <a href="#p123"><b>1.2.3</b>Units of data</a>
+      <a href="#p124"><b>1.2.4</b>How data is stored</a>
+      <a href="#pcalc"><b>Tool</b>File size calculator</a>
+    </div>
+  </div>
+  <div class="grp">
+    <button class="gbtn" aria-expanded="false" aria-controls="m3">Practise</button>
+    <div class="menu" id="m3" hidden>
+      <a href="#flashcards">Flashcards</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#exam">Exam questions</a>
+    </div>
+  </div>
 </nav>
 
 <div class="wrap">
@@ -585,7 +613,7 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
 <section class="topic" id="memory">
   <h2><span class="ref">1.2</span>Memory and storage</h2>
 
-  <h3>1.2.1 Primary storage (memory)</h3>
+  <h3 id="p121">1.2.1 Primary storage (memory)</h3>
   <p>Primary storage is memory the CPU can access directly. The CPU needs it because it can only work on data and instructions that are in main memory, not on a hard drive.</p>
   <div class="scroll"><table>
     <tr><th></th><th>RAM</th><th>ROM</th></tr>
@@ -596,7 +624,7 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
   </table></div>
   <div class="keybox"><p><b>Virtual memory:</b> when RAM is full, the computer uses part of the <mark>secondary storage</mark> as if it were extra RAM. Data not needed right now is moved out of RAM into virtual memory, and moved back when needed. This lets more programs run, but it is <mark>slower</mark> because secondary storage is slower than RAM.</p></div>
 
-  <h3>1.2.2 Secondary storage</h3>
+  <h3 id="p122">1.2.2 Secondary storage</h3>
   <p>Secondary storage is needed because RAM is volatile and limited. It is <mark>non-volatile</mark>, so it keeps programs and files when the power is off, and it holds much more data.</p>
   <div class="scroll"><table>
     <tr><th>Type</th><th>Examples</th><th>Strengths</th><th>Weaknesses</th></tr>
@@ -606,7 +634,7 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
   </table></div>
   <p>Compare using: <b>capacity, speed, portability, durability, reliability, cost</b>. Example: a school backing up lots of work could use an external hard drive for its large capacity and low cost. A phone uses solid state because it is small, fast and durable.</p>
 
-  <h3>1.2.3 Units of data</h3>
+  <h3 id="p123">1.2.3 Units of data</h3>
   <div class="scroll"><table>
     <tr><th>Unit</th><th>Size</th></tr>
     <tr><td>bit</td><td>a single 1 or 0</td></tr>
@@ -620,7 +648,7 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
   </table></div>
   <p>OCR uses <b>1000</b> (not 1024) between units. To go to a bigger unit, divide. To go to a smaller unit, multiply. Computers use binary because they are built from switches that are either on (1) or off (0).</p>
 
-  <h3>1.2.4 How data is stored</h3>
+  <h3 id="p124">1.2.4 How data is stored</h3>
   <h3 style="margin-top:.4rem">Numbers</h3>
   <p>Tap the bits to build a binary number. Each bit is worth double the one to its right.</p>
   <div class="panel">
@@ -653,7 +681,7 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
     <tr><td>Permanently removes some data. Much smaller file, quality drops, original cannot be restored. Example: JPEG, MP3.</td><td>Reduces file size without losing any data. Original can be restored exactly. Smaller saving. Example: PNG, ZIP.</td></tr>
   </table></div>
 
-  <h3>File size calculator</h3>
+  <h3 id="pcalc">File size calculator</h3>
   <div class="panel calc" id="calc">
     <div class="seg" role="group" aria-label="File type">
       <button data-m="img" aria-pressed="true">Image</button>
@@ -1037,6 +1065,30 @@ footer { padding: 3rem 0 4rem; color: var(--muted); }
   });
   document.querySelectorAll("#calc input").forEach(function (i) { i.addEventListener("input", calc); });
   calc();
+
+  /* ---------- Top menu ---------- */
+  var gbtns = document.querySelectorAll(".gbtn");
+  function closeMenus() { gbtns.forEach(function (b) { b.setAttribute("aria-expanded", "false"); document.getElementById(b.getAttribute("aria-controls")).hidden = true; }); }
+  gbtns.forEach(function (b) {
+    b.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var open = b.getAttribute("aria-expanded") === "true";
+      closeMenus();
+      if (!open) { b.setAttribute("aria-expanded", "true"); document.getElementById(b.getAttribute("aria-controls")).hidden = false; }
+    });
+  });
+  document.querySelectorAll(".menu a").forEach(function (a) { a.addEventListener("click", closeMenus); });
+  document.addEventListener("click", closeMenus);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenus(); });
+  var secGroup = { cpu: 0, registers: 0, performance: 0, embedded: 0, memory: 1, flashcards: 2, quiz: 2, exam: 2 };
+  if ("IntersectionObserver" in window) {
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) gbtns.forEach(function (b, i) { b.classList.toggle("cur", i === secGroup[en.target.id]); });
+      });
+    }, { rootMargin: "-30% 0px -60% 0px" });
+    Object.keys(secGroup).forEach(function (id) { var el = document.getElementById(id); if (el) spy.observe(el); });
+  }
 
   /* ---------- Flashcards ---------- */
   var cards = [
